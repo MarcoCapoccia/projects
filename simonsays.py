@@ -4,6 +4,7 @@ import time
 import random
 import numpy as np 
 
+
 def reset():
     global score
     global highscore
@@ -25,7 +26,7 @@ def start():
     correctSequence = np.array([])
     i = 0
     while(i<100):
-        correctSequence = np.append(correctSequence,random.randint(0, 3) and random.randint(1, 100)<25)
+        correctSequence = np.append(correctSequence,random.randint(0, 3))
         if (correctSequence[i] == correctSequence[i-1]):
             correctSequence[i] = random.randint(0, 3)
         i = i+1
@@ -56,24 +57,25 @@ def showSequence():
     canvas.itemconfig(startText,tags="niks")
     i = 0
     canvas.update()
-    showSequence2(5)
+    showSequence2(5,0.4)
     while(i<=index):
+        showSequence2(5,0.2)
         if(correctSequence[i]==0):
             canvas.itemconfig(groen,fill="#49B234")
             canvas.update()
-            showSequence2(0)
+            showSequence2(0,0.4)
         elif(correctSequence[i]==1):
             canvas.itemconfig(rood,fill="red")
             canvas.update()
-            showSequence2(1)
+            showSequence2(1,0.4)
         elif(correctSequence[i]==2):
             canvas.itemconfig(geel,fill="#FAF13C")
             canvas.update()
-            showSequence2(2)
+            showSequence2(2,0.4)
         elif(correctSequence[i]==3):
-            canvas.itemconfig(blauw,fill="#5049FA")
+            canvas.itemconfig(blauw,fill="#1b76cc")
             canvas.update()
-            showSequence2(3)
+            showSequence2(3,0.4)
         i = i+1
 
     canvas.itemconfig(groen,tags="groen")
@@ -83,8 +85,8 @@ def showSequence():
     canvas.itemconfig(startKnop,tags="stop")
     canvas.itemconfig(startText,tags="stop")
 
-def showSequence2(x):
-    time.sleep(0.4)
+def showSequence2(x,y):
+    time.sleep(y)
     if(x==0):
         canvas.itemconfig(groen,fill="green")     
     elif(x==1):
@@ -145,7 +147,7 @@ def kleurSwitch(groen,rood,geel,blauw,x):
         sequence = np.append(sequence,x)
         kleurSwitch2(groen,rood,geel,blauw,x)
     elif(x == 3):
-        canvas.itemconfig(blauw,fill="#5049FA",tags="niks")
+        canvas.itemconfig(blauw,fill="#1b76cc",tags="niks")
         canvas.itemconfig(groen,tags="niks")
         canvas.itemconfig(geel,tags="niks")
         canvas.itemconfig(rood,tags="niks")
@@ -155,7 +157,7 @@ def kleurSwitch(groen,rood,geel,blauw,x):
     check()  
         
 def kleurSwitch2(groen,rood,geel,blauw,x):
-    time.sleep(0.4)
+    time.sleep(0.3)
     if(x==0):
         canvas.itemconfig(groen,fill="green",tags="groen")
         canvas.itemconfig(rood,tags="rood")
@@ -177,30 +179,32 @@ def kleurSwitch2(groen,rood,geel,blauw,x):
         canvas.itemconfig(geel,tags="geel")
         canvas.itemconfig(groen,tags="groen")
       
-def clicked (groen,rood,geel,blauw,x) :
-    kleurSwitch(groen,rood,geel,blauw,x)
-    
 score = 0
 highscore = 0
 spel = Tk()
 spel.title("Simon Says")
-spel.geometry("200x300")
-canvas = Canvas(spel, width= 200,height=300,bg="white")
+spel.geometry("400x600")
+canvas = Canvas(spel, width= 400,height=600,bg="white")
 
-groen = canvas.create_rectangle(0, 0, 100, 100, fill = "green",tags='niks')
-canvas.tag_bind ('groen',"<Button-1>", lambda event: clicked(groen,rood,geel,blauw,0))
-rood = canvas.create_rectangle(100, 0, 200, 100, fill = "#BC0606",tags='niks')
-canvas.tag_bind ('rood',"<Button-1>", lambda event: clicked(groen,rood,geel,blauw,1))
-geel = canvas.create_rectangle(0, 100, 100, 200, fill = "#C4BC16",tags='niks')
-canvas.tag_bind ('geel',"<Button-1>", lambda event: clicked(groen,rood,geel,blauw,2))
-blauw = canvas.create_rectangle(100, 100, 200, 200, fill = "blue",tags='niks')
-canvas.tag_bind ('blauw',"<Button-1>", lambda event: clicked(groen,rood,geel,blauw,3))
+groen = canvas.create_arc(0,0,400, 400,width=7,outline='black',fill='green',tags='niks',start=90,extent=90)
+rood = canvas.create_arc(0,0,400, 400,width=7,outline='black',fill='#BC0606',tags='niks',start=0,extent=90)
+geel = canvas.create_arc(0,0,400, 400,width=7,outline='black',fill='#C4BC16',tags='niks',start=180,extent=90)
+blauw = canvas.create_arc(0,0,400, 400,width=7,outline='black',fill='blue',tags='niks',start=270,extent=90)
 
-scoreLabel = canvas.create_text(50, 238, text="Score: "+str(score),fill="black")
-highscoreLabel = canvas.create_text(50, 262, text="Highscore: "+str(highscore),fill="black")
+canvas.tag_bind ('groen',"<Button-1>", lambda event: kleurSwitch(groen,rood,geel,blauw,0))
+canvas.tag_bind ('rood',"<Button-1>", lambda event: kleurSwitch(groen,rood,geel,blauw,1))
+canvas.tag_bind ('geel',"<Button-1>", lambda event: kleurSwitch(groen,rood,geel,blauw,2))
+canvas.tag_bind ('blauw',"<Button-1>", lambda event: kleurSwitch(groen,rood,geel,blauw,3))
 
-startKnop = canvas.create_rectangle(125, 225, 175, 275,outline = "black", fill = "dark green",tags='start')
-startText = canvas.create_text(150,250,text="Start",tags="start")
+
+canvas.create_oval(175,175,225, 225,fill="black",outline='black')
+
+
+scoreLabel = canvas.create_text(100, 476, text="Score: "+str(score),fill="black",font=("Arial", 25))
+highscoreLabel = canvas.create_text(100, 524, text="Highscore: "+str(highscore),fill="black",font=("Arial", 25))
+
+startKnop = canvas.create_rectangle(250, 450, 350, 550,outline = "black", fill = "dark green",tags='start')
+startText = canvas.create_text(300,500,text="Start",tags="start",font=("Arial", 25))
 canvas.tag_bind('start',"<Button-1>", lambda event: start())
 canvas.tag_bind('stop',"<Button-1>", lambda event: reset())
 
